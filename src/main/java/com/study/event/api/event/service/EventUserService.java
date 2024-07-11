@@ -10,10 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.MimeMessage;
+import javax.swing.*;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -31,6 +33,9 @@ public class EventUserService {
 
     // 이메일 전송 객체
     private final JavaMailSender mailSender;
+
+    // 패스워드 암호화 객체
+    private final PasswordEncoder encoder;
 
     // 이메일 중복확인 처리
     public boolean checkEmailDuplicate(String email) {
@@ -160,8 +165,12 @@ public class EventUserService {
         EventUser foundUser = eventUserRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new RuntimeException("회원 정보가 존재하지 않습니다."));
 
+        // 데이터 반경 (패스워드, 가입시간)
+        String password = dto.getPassword();
+        String encodedPassword = encoder.encode(password);
+
         // 데이터 반영 (패스워드, 가입시간)
-        foundUser.confirm(dto.getPassword());
+        foundUser.confirm(encodedPassword);
         eventUserRepository.save(foundUser);
 
     }
