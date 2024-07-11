@@ -3,7 +3,7 @@ package com.study.event.api.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+// test commit 을 위한 주석
 // 전역 크로스 오리진 설정: 어떤 클라이언트를 허용할 것인지
 @Configuration
 public class CrossOriginConfig implements WebMvcConfigurer {
