@@ -1,5 +1,6 @@
 package com.study.event.api.event.service;
 
+import com.study.event.api.event.dto.request.EventUserSaveDto;
 import com.study.event.api.event.entity.EmailVerification;
 import com.study.event.api.event.entity.EventUser;
 import com.study.event.api.event.repository.EmailVerificationRepository;
@@ -151,5 +152,17 @@ public class EventUserService {
 
 
         // 인증코드가 있고 만료시간이 지나지 않았고 코드번확 일치할 경우
+    }
+
+    public void confirmSignUp(EventUserSaveDto dto) {
+
+        // 기존 회원정보 조회
+        EventUser foundUser = eventUserRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("회원 정보가 존재하지 않습니다."));
+
+        // 데이터 반영 (패스워드, 가입시간)
+        foundUser.confirm(dto.getPassword());
+        eventUserRepository.save(foundUser);
+
     }
 }
