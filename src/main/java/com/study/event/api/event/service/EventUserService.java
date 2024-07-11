@@ -54,6 +54,11 @@ public class EventUserService {
 
         EventUser savedUser = eventUserRepository.save(newEventUser);
 
+        generateAndSendCode(email, savedUser);
+
+    }
+
+    private void generateAndSendCode(String email, EventUser eventUser) {
         // 2. 이메일 인증 코드 발송
         String code = sendVerificationEmail(email);
 
@@ -61,11 +66,10 @@ public class EventUserService {
         EmailVerification verification = EmailVerification.builder()
                 .verificationCode(code) // 인증코드
                 .expiryDate(LocalDateTime.now().plusMinutes(5)) // 만료 시간(5분뒤)
-                .eventUser(savedUser) // Fk, 엔터티 자체를 주면 알아서 아이디를 받아와 사용(JPA 에서는)
+                .eventUser(eventUser) // Fk, 엔터티 자체를 주면 알아서 아이디를 받아와 사용(JPA 에서는)
                 .build();
 
         emailVerificationRepository.save(verification);
-
     }
 
     // 이메일 인증 코드 보내기
@@ -119,7 +123,24 @@ public class EventUserService {
             // 인증코드가 있는지 탐색
             EmailVerification ev = emailVerificationRepository.findByEventUser(eventUser).orElse(null);
 
-            return ev != null && ev.getExpiryDate().isAfter(LocalDateTime.now()) && ev.getVerificationCode().equals(code);
+            if(ev != null && ev.getExpiryDate().isAfter(LocalDateTime.now()) && ev.getVerificationCode().equals(code)) {
+
+                // 이메일 인증여부 true로 수정
+                eventUser.setEmailVerified(true);
+                eventUserRepository.save(eventUser);
+
+                // 인증코드 데이터베이스에서 삭제
+                emailVerificationRepository.delete(ev);
+                return true;
+            } else { // 인증코드가 틀렸거나 만료된 경우
+                // 인즈오드 재발송
+                // 원래 인증코드 삭제
+
+                // 새인증코드 발급 이메일 재전송
+                // 데이터베이스에 새 인증코드 저장
+                generateAndSendCode(email, eventUser);
+                return false;
+             }
         }
 
         return false;
