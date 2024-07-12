@@ -44,8 +44,13 @@ public class EventUser {
     @Column(nullable = false)
     private boolean emailVerified;
 
+    // 비밀번호 설정을 완료했는지 여부
+    @Column(name="is_password", nullable = false)
+    private boolean passwordVerified = false;
+
     public void confirm(String password) {
         this.password = password;
         this.createAt = LocalDateTime.now();
+        this.passwordVerified = true;
     }
 }

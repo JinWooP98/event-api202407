@@ -174,4 +174,8 @@ public class EventUserService {
         eventUserRepository.save(foundUser);
 
     }
+
+    public boolean isPasswordVerified(String email) {
+        return eventUserRepository.isEmailPasswordVerified(email);
+    }
 }

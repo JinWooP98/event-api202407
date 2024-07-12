@@ -19,8 +19,11 @@ public class EventUserController {
     @GetMapping("/check-email")
     public ResponseEntity<?> checkEmail(String email) {
         boolean isDuplicate = eventUserService.checkEmailDuplicate(email);
+        boolean isPassword = eventUserService.isPasswordVerified(email);
 
-        eventUserService.checkEmailDuplicate(email);
+        if(isDuplicate && !isPassword) {
+           return ResponseEntity.ok().body(false);
+        }
 
         return ResponseEntity.ok().body(isDuplicate);
     }

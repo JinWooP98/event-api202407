@@ -2,7 +2,9 @@ package com.study.event.api.event.repository;
 
 import com.study.event.api.event.entity.EventUser;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface EventUserRepository extends JpaRepository<EventUser, String> {
@@ -12,4 +14,10 @@ public interface EventUserRepository extends JpaRepository<EventUser, String> {
 
     // 조회가 안됐을 때 nullpointExeption을 피하기 위해 optional 사용
     Optional<EventUser> findByEmail(String email);
+
+    @Query(value = "SELECT is_password " +
+            "       FROM tbl_event_user " +
+            "       WHERE ev_user_email = ?1 ", nativeQuery = true)
+    boolean isEmailPasswordVerified(String email);
+
 }
