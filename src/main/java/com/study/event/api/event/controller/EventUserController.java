@@ -54,7 +54,7 @@ public class EventUserController {
 
         try {
             eventUserService.authenticate(dto);
-            return ResponseEntity.ok().body("login success");
+            return ResponseEntity.ok().body(dto);
         } catch (LoginFailException e) {
             // 서비스에서 예외발생 (로그인 실패)
             String errorMessage = e.getMessage();
