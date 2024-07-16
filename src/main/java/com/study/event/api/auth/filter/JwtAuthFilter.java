@@ -77,6 +77,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     private String parseBearerToken(HttpServletRequest request) {
+
         /*
             1. 요청 헤더에서 토큰을 가져오기
 

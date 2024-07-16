@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface EventRepositoryCustom {
 
-    Page<Event> findEvents(String sort, Pageable pageable);
+    Page<Event> findEvents(String sort, Pageable pageable, String userId);
 
     // ...
 

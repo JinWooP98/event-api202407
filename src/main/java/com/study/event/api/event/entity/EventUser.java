@@ -6,9 +6,11 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
         import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@ToString
+@ToString(exclude = "eventList")
 @EqualsAndHashCode(of ="id")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,11 +40,17 @@ public class EventUser {
 
     private LocalDateTime createAt; // 회원가입 시간
 
+    @OneToMany(mappedBy = "eventUser", orphanRemoval = true, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Event> eventList = new ArrayList<>();
+
     // 이메일 인증을 완료했는지 여부
     // 엔터티에 boolean타입을 사용하면 실제 DB에는 0, 1로 저장됨에 주의
     @Setter
     @Column(nullable = false)
     private boolean emailVerified;
+
+
 
 
     public void confirm(String password) {
