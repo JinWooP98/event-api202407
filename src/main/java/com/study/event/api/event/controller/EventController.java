@@ -60,7 +60,7 @@ public class EventController {
             return ResponseEntity.ok().body(events);
         } catch (Exception e) {
             log.warn(e.getMessage());
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(401).body(e.getMessage());
         }
     }
 
