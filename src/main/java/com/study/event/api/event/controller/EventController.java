@@ -1,6 +1,8 @@
 package com.study.event.api.event.controller;
 
 
+import com.study.event.api.auth.TokenProvider;
+import com.study.event.api.auth.TokenProvider.TokenUserInfo;
 import com.study.event.api.event.dto.request.EventSaveDto;
 import com.study.event.api.event.dto.response.EventDetailDto;
 import com.study.event.api.event.dto.response.EventOneDto;
@@ -39,7 +41,7 @@ public class EventController {
         Map<String, Object> events = eventService.getEvents(pageNo, sort, userId);
 
         // 의도적으로 2초간의 로딩을 설정
-        Thread.sleep(2000);
+        // Thread.sleep(2000);
 
         return ResponseEntity.ok().body(events);
     }
@@ -49,9 +51,9 @@ public class EventController {
     public ResponseEntity<?> register(
             // JwtAuthFilter에서 시큐리티에 등록한 데이터
             // 토큰파싱 결과로 로그인에 성공한 회원의 PK
-            @AuthenticationPrincipal String userId,
+            @AuthenticationPrincipal TokenUserInfo tokenInfo,
             @RequestBody EventSaveDto dto) throws InterruptedException {
-        List<EventDetailDto> events = eventService.saveEvent(dto, userId);
+        List<EventDetailDto> events = eventService.saveEvent(dto, tokenInfo);
         return ResponseEntity.ok().body(events);
     }
 

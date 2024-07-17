@@ -24,6 +24,8 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     @Override
     public Page<Event> findEvents(String sort, Pageable pageable, String userId) {
+
+        // 페이징을 통한 조회
         List<Event> eventList = factory
                 .selectFrom(event)
                 .where(event.eventUser.id.eq(userId))
@@ -36,6 +38,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         Long count = factory
                 .select(event.count())
                 .from(event)
+                .where(event.eventUser.id.eq(userId))
                 .fetchOne();
 
         return new PageImpl<>(eventList, pageable, count);

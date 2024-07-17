@@ -1,5 +1,6 @@
 package com.study.event.api.event.service;
 
+import com.study.event.api.auth.TokenProvider;
 import com.study.event.api.event.dto.request.EventSaveDto;
 import com.study.event.api.event.dto.response.EventDetailDto;
 import com.study.event.api.event.dto.response.EventOneDto;
@@ -49,7 +50,6 @@ public class EventService {
 //
         // 총 이벤트 개수
         long totalElements = eventsPage.getTotalElements();
-//        long totalElements = 1;
 
         Map<String, Object> map = new HashMap<>();
         map.put("events", eventDtoList);
@@ -59,10 +59,10 @@ public class EventService {
     }
 
     // 이벤트 등록
-    public List<EventDetailDto> saveEvent(EventSaveDto dto, String userId) {
+    public List<EventDetailDto> saveEvent(EventSaveDto dto, TokenProvider.TokenUserInfo tokenInfo) {
 
         // 로그인한 회원 정보 조회
-        EventUser eventUser = eventUserRepository.findById(userId).orElseThrow();
+        EventUser eventUser = eventUserRepository.findById(tokenInfo.getUserId()).orElseThrow();
 
         Event newEvent = dto.toEntity();
         newEvent.setEventUser(eventUser);
