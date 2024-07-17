@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class EventController {
     @SneakyThrows
     @GetMapping("/page/{pageNo}")
     public ResponseEntity<?> getList(
-            @AuthenticationPrincipal String userId,
+            @AuthenticationPrincipal TokenUserInfo tokenInfo,
             @RequestParam(required = false) String sort,
             @PathVariable int pageNo)  {
 
@@ -38,7 +39,7 @@ public class EventController {
             return ResponseEntity.badRequest().body("sort 파라미터가 없습니다.");
         }
 
-        Map<String, Object> events = eventService.getEvents(pageNo, sort, userId);
+        Map<String, Object> events = eventService.getEvents(pageNo, sort, tokenInfo);
 
         // 의도적으로 2초간의 로딩을 설정
         // Thread.sleep(2000);
@@ -57,6 +58,8 @@ public class EventController {
         return ResponseEntity.ok().body(events);
     }
 
+    // 단일 조회 요청
+    @PreAuthorize("hasAuthority('PREMIUM') or hasAuthority('ADMIN')")
     @GetMapping("/{eventId}")
     public ResponseEntity<?> getEvent(@PathVariable Long eventId) {
 

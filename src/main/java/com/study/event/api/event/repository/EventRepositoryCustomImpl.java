@@ -2,6 +2,7 @@ package com.study.event.api.event.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.study.event.api.auth.TokenProvider;
 import com.study.event.api.event.entity.Event;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,12 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     private final JPAQueryFactory factory;
 
     @Override
-    public Page<Event> findEvents(String sort, Pageable pageable, String userId) {
+    public Page<Event> findEvents(String sort, Pageable pageable, TokenProvider.TokenUserInfo tokenInfo) {
 
         // 페이징을 통한 조회
         List<Event> eventList = factory
                 .selectFrom(event)
-                .where(event.eventUser.id.eq(userId))
+                .where(event.eventUser.id.eq(tokenInfo.getUserId()))
                 .orderBy(specifier(sort))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -38,7 +39,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
         Long count = factory
                 .select(event.count())
                 .from(event)
-                .where(event.eventUser.id.eq(userId))
+                .where(event.eventUser.id.eq(tokenInfo.getUserId()))
                 .fetchOne();
 
         return new PageImpl<>(eventList, pageable, count);

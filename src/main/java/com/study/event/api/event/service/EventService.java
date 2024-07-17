@@ -1,6 +1,7 @@
 package com.study.event.api.event.service;
 
 import com.study.event.api.auth.TokenProvider;
+import com.study.event.api.auth.TokenProvider.TokenUserInfo;
 import com.study.event.api.event.dto.request.EventSaveDto;
 import com.study.event.api.event.dto.response.EventDetailDto;
 import com.study.event.api.event.dto.response.EventOneDto;
@@ -31,11 +32,11 @@ public class EventService {
     private final EventUserRepository eventUserRepository;
 
     // 전체 조회 서비스
-    public Map<String, Object> getEvents(int pageNo, String sort, String userId) {
+    public Map<String, Object> getEvents(int pageNo, String sort, TokenUserInfo tokenUserInfo) {
 
         Pageable pageable = PageRequest.of(pageNo - 1 , 4);
 
-        Page<Event> eventsPage = eventRepository.findEvents(sort, pageable, userId);
+        Page<Event> eventsPage = eventRepository.findEvents(sort, pageable, tokenUserInfo);
 
 //        EventUser eventUser = eventUserRepository.findById(userId).orElseThrow();
 //
@@ -59,7 +60,7 @@ public class EventService {
     }
 
     // 이벤트 등록
-    public List<EventDetailDto> saveEvent(EventSaveDto dto, TokenProvider.TokenUserInfo tokenInfo) {
+    public List<EventDetailDto> saveEvent(EventSaveDto dto, TokenUserInfo tokenInfo) {
 
         // 로그인한 회원 정보 조회
         EventUser eventUser = eventUserRepository.findById(tokenInfo.getUserId()).orElseThrow();
