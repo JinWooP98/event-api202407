@@ -53,9 +53,15 @@ public class EventController {
             // JwtAuthFilter에서 시큐리티에 등록한 데이터
             // 토큰파싱 결과로 로그인에 성공한 회원의 PK
             @AuthenticationPrincipal TokenUserInfo tokenInfo,
-            @RequestBody EventSaveDto dto) throws InterruptedException {
-        List<EventDetailDto> events = eventService.saveEvent(dto, tokenInfo);
-        return ResponseEntity.ok().body(events);
+            @RequestBody EventSaveDto dto) {
+
+        try {
+            List<EventDetailDto> events = eventService.saveEvent(dto, tokenInfo);
+            return ResponseEntity.ok().body(events);
+        } catch (Exception e) {
+            log.warn(e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     // 단일 조회 요청

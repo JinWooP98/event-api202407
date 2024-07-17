@@ -48,7 +48,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests() // 요청 별로 인가 설정
-                .antMatchers(HttpMethod.DELETE,"/events/*").hasAuthority("ADMIN")
+                // 여러 권한을 설정하려면 hasAnyAuthority, 한개의 역할에만 지정하려면 hasAuthority
+                .antMatchers(HttpMethod.DELETE,"/events/*").hasAnyAuthority("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/auth/promote").hasAuthority("COMMON")
                 // 아래의 URL 요청은 로그인 없이 모두 허용
                 .antMatchers("/", "/auth/**").permitAll()
 //                .antMatchers(HttpMethod.POST, "/events/**").permitAll()

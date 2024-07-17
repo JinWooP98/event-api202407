@@ -57,4 +57,8 @@ public class EventUser {
         this.password = password;
         this.createAt = LocalDateTime.now();
     }
+
+    public void promoteToPremium() {
+        this.role = Role.PREMIUM;
+    }
 }

@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.internet.MimeMessage;
-import javax.swing.*;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -235,6 +233,27 @@ public class EventUserService {
                 .email(eventUser.getEmail())
                 .role(eventUser.getRole().toString())
                 .token(token)
+                .build();
+
+    }
+
+    // 등업 처리
+    public LoginResponseDto promoteToPremium(String userId) {
+        // 회원 탐색
+        EventUser eventUser = eventUserRepository.findById(userId).orElseThrow();
+
+        // 등급변경(변경후 저장)
+        eventUser.promoteToPremium();
+
+        EventUser promotedUser = eventUserRepository.save(eventUser);
+
+        // 토큰 재발급
+        String token = tokenProvider.createToken(promotedUser);
+
+        return LoginResponseDto.builder()
+                .token(token)
+                .role(promotedUser.getRole().toString())
+                .email(promotedUser.getEmail())
                 .build();
 
     }
